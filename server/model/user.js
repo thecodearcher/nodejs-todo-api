@@ -41,11 +41,10 @@ Userschema.methods.toJSON = function(){
 };
 
 Userschema.methods.generateAuthToken = function(){
-    console.log("gott");
         let user = this;
         let access = 'auth';
         var token = jwt.sign({_id:user._id.toHexString(),access},'abc123').toString();
-        console.log(token);
+       
         user.tokens.push({access,token});
         
         return user.save()
@@ -70,6 +69,26 @@ Userschema.pre('save',function(next){
     }
 
 });
+
+Userschema.statics.findByCredentials = function (email,password){
+    return User.findOne({email})
+    .then(user=>{
+        if(!user){
+            Promise.reject();
+        }
+
+        return new Promise((resolve,reject)=>{
+            bcrypt.compare(password,user.password,(err,res)=>{
+                if(res){
+                    resolve(user);
+                }else {
+                    reject();
+                }
+            });
+        });
+    });
+    
+};
 
 Userschema.statics.findByToken = function (token) {
         var user = this;
