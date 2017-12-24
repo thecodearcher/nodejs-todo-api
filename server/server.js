@@ -10,7 +10,7 @@ var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./model/todo');
 var {User} = require('./model/user');
 
-var port = process.env.PORT;
+var port = process.env.PORT || 3000;
 
 var app = express();
 app.use(bodyParser.json());
